@@ -22,7 +22,18 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to the Travel History API' })
 })
 
-app.get('/:country', (req, res) => {
-  const { country } = req.params
-  res.send({ message: `Welcome to the Travel History API - ${country}` })
+// app.get('/:country', (req, res) => {
+//   const { country } = req.params
+//   res.send({ message: `Welcome to the Travel History API - ${country}` })
+// })
+
+app.get('/db', async (req, res) => {
+  try {
+    const admin = mongoose.connection.db.admin()
+    const info = await admin.serverInfo()
+    res.send(info)
+  } catch (error) {
+    console.error('Error fetching DB info:', error)
+    res.status(500).send({ error: 'Failed to fetch DB info' })
+  }
 })
