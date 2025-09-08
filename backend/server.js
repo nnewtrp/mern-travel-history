@@ -13,6 +13,9 @@ app.use(express.json())
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
+// Define Mongoose model for 'test1' collection
+const Test1 = mongoose.model('test1', new mongoose.Schema({}, { collection: 'test1' }))
+
 // Define routes and middleware
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
@@ -27,13 +30,15 @@ app.get('/', (req, res) => {
 //   res.send({ message: `Welcome to the Travel History API - ${country}` })
 // })
 
-app.get('/db', async (req, res) => {
+app.get('/test1', async (req, res) => {
   try {
-    const admin = mongoose.connection.db.admin()
-    const info = await admin.serverInfo()
-    res.send(info)
+    const docs = await Test1.find({})
+    res.json({
+      data: docs,
+      count: docs.length
+    })
   } catch (error) {
-    console.error('Error fetching DB info:', error)
-    res.status(500).send({ error: 'Failed to fetch DB info' })
+    console.error('Error fetching test1 data:', error)
+    res.status(500).json({ error: 'Failed to fetch test1 data' })
   }
 })
