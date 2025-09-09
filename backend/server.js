@@ -13,9 +13,6 @@ app.use(express.json())
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
-// Define Mongoose model for 'test1' collection
-const Test1 = mongoose.model('test1', new mongoose.Schema({}, { collection: 'test1' }))
-
 // Define routes and middleware
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
@@ -25,20 +22,6 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to the Travel History API' })
 })
 
-// app.get('/:country', (req, res) => {
-//   const { country } = req.params
-//   res.send({ message: `Welcome to the Travel History API - ${country}` })
-// })
-
-app.get('/test1', async (req, res) => {
-  try {
-    const docs = await Test1.find({})
-    res.json({
-      data: docs,
-      count: docs.length
-    })
-  } catch (error) {
-    console.error('Error fetching test1 data:', error)
-    res.status(500).json({ error: 'Failed to fetch test1 data' })
-  }
-})
+// Import routes from other files
+const test1Routes = require('./routes/test1')
+app.use('/test1', test1Routes)
