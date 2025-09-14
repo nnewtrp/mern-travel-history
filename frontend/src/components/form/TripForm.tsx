@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogActions, Button, TextField, Grid, AppBar, Toolbar, IconButton, Typography, Divider } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close'
+import LocationPinIcon from '@mui/icons-material/LocationPin'
 
 export default function TripForm(props: { open: boolean, onClose?: () => void }) {
   const onClose = (reason: string) => {
@@ -13,7 +14,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
   }
 
   return (
-    <Dialog open={props.open} onClose={(event: any, reason: string) => onClose(reason)} fullWidth maxWidth="lg">
+    <Dialog open={props.open} onClose={(_event: any, reason: string) => onClose(reason)} fullWidth maxWidth="lg">
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant="h6" component="div">
@@ -65,10 +66,11 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
           </Grid>
 
           <Grid size={12} display="flex" alignItems="space-between">
+            <LocationPinIcon sx={{ mr: 1, pt: 0.4 }} />
             <Typography variant="h6">Locations</Typography>
             <div style={{ flexGrow: 1 }} />
             <Button variant="contained" color="primary" size="small">
-              Add Location
+              Add City
             </Button>
           </Grid>
             
@@ -76,7 +78,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
             <TextField
               autoFocus
               margin="dense"
-              label="Location"
+              label="City"
               type="text"
               fullWidth
             />
