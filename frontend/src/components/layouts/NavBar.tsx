@@ -8,7 +8,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const menuList = [
-    { title: 'Home', path: '/' },
+    { title: 'Map', path: '/map' },
     { title: 'Add Trip', path: '/manage' },
   ]
 
