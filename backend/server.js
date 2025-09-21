@@ -22,6 +22,6 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to the Travel History API' })
 })
 
-// Import routes from other files
-const test1Routes = require('./routes/test1')
-app.use('/test1', test1Routes)
+// Import city routes
+const cityRoutes = require('./routes/master/city')
+app.use('/api/city', cityRoutes)
