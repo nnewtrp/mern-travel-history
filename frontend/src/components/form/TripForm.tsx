@@ -1,6 +1,6 @@
 import {
   Dialog, DialogContent, DialogActions, Button, TextField, Grid, AppBar, Toolbar, IconButton, Typography, Divider,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Autocomplete
 } from "@mui/material"
 import { useState } from "react"
 import CloseIcon from '@mui/icons-material/Close'
@@ -129,18 +129,19 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                         </IconButton>
                       </TableCell>
                       <TableCell>
-                        <TextField
+                        <Autocomplete
                           value={item.city}
-                          onChange={(e) => setVisitItems((prev) => {
-                            const updated = [...prev]
-                            updated[i].city = e.target.value
-                            return updated
-                          })}
-                          autoFocus
-                          margin="dense"
-                          label="City"
-                          type="text"
+                          onChange={(_event, newValue) => {
+                            setVisitItems((prev) => {
+                              const updated = [...prev]
+                              updated[i].city = newValue
+                              return updated
+                            })
+                          }}
+                          disablePortal
+                          options={[]}
                           fullWidth
+                          renderInput={(params) => <TextField {...params} label="City" />}
                         />
                       </TableCell>
                       <TableCell></TableCell>
@@ -200,18 +201,19 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                         </IconButton>
                       </TableCell>
                       <TableCell>
-                        <TextField
+                        <Autocomplete
                           value={item.city}
-                          onChange={(e) => setTransitItems((prev) => {
-                            const updated = [...prev]
-                            updated[i].city = e.target.value
-                            return updated
-                          })}
-                          autoFocus
-                          margin="dense"
-                          label="City"
-                          type="text"
+                          onChange={(_event, newValue) => {
+                            setTransitItems((prev) => {
+                              const updated = [...prev]
+                              updated[i].city = newValue
+                              return updated
+                            })
+                          }}
+                          disablePortal
+                          options={[]}
                           fullWidth
+                          renderInput={(params) => <TextField {...params} label="City" />}
                         />
                       </TableCell>
                       <TableCell></TableCell>
