@@ -16,15 +16,20 @@ const City = mongoose.model('city', new mongoose.Schema({
 // GET /city - Retrieve all documents from the 'city' collection
 router.get('/', async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10
-    const skip = parseInt(req.query.skip) || 0
-    const data = await City.find({}).limit(limit).skip(skip)
-    const length = await City.countDocuments({})
+    // Parse query parameters for pagination and filtering
+    const limit = parseInt(req.query.pageSize) || 10
+    const skip = parseInt((req.query.page - 1) * limit) || 0
+    const name = req.query.TextSearch || ''
+    const findQuery = {name: { $regex: new RegExp(name, 'i') }}
+
+    // Fetch data with pagination and optional name filtering
+    const data = await City.find(findQuery).limit(limit).skip(skip).select('name -_id country -_id iso3 -_id').exec()
+    const length = await City.countDocuments(findQuery)
 
     // Return data and total count
     res.json({
-      data: data,
-      count: length
+      count: length,
+      data: data
     })
   } catch (error) {
     console.error('Error fetching data:', error)
