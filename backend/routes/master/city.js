@@ -16,26 +16,41 @@ const City = mongoose.model('city', new mongoose.Schema({
 // GET /city - Retrieve all documents from the 'city' collection
 router.get('/', async (req, res) => {
   try {
-    // Parse query parameters for pagination and filtering
-    const limit = parseInt(req.query.pageSize) || 10
-    const skip = parseInt((req.query.page - 1) * limit) || 0
-    const name = req.query.TextSearch || ''
-    const findQuery = {name: { $regex: new RegExp(name, 'i') }}
+    // --- Parse and sanitize query parameters ---
+    const {
+      TextSearch = '',
+      page = 1,
+      pageSize = 10
+    } = req.query;
 
-    // Fetch data with pagination and optional name filtering
-    const data = await City.find(findQuery).limit(limit).skip(skip).select('name -_id country -_id iso3 -_id').exec()
-    const length = await City.countDocuments(findQuery)
+    const limit = Math.max(parseInt(pageSize, 10) || 10, 0);
+    const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
 
-    // Return data and total count
-    res.json({
-      count: length,
-      data: data
-    })
+    // --- Build query ---
+    const findQuery = TextSearch
+      ? { name: { $regex: new RegExp(TextSearch, 'i') } }
+      : {};
+
+    // --- Run queries in parallel ---
+    const [count, data] = await Promise.all([
+      City.countDocuments(findQuery),
+      City.find(findQuery)
+        .select('name country iso3 -_id')
+        .skip(limit > 0 ? skip : 0)
+        .limit(limit > 0 ? limit : 0)
+        .lean()
+        .exec()
+    ]);
+
+    // --- Return consistent JSON response ---
+    res.json({ count, data });
   } catch (error) {
-    console.error('Error fetching data:', error)
-    res.status(500).json({ error: 'Failed to fetch data' })
+    res.status(500).json({
+      message: 'Failed to fetch cities',
+      error: error.message
+    });
   }
-})
+});
 
 // GET /city/:name - Retrieve a single document by name
 router.get('/:name', async (req, res) => {
@@ -46,7 +61,6 @@ router.get('/:name', async (req, res) => {
     }
     res.json({ data: doc })
   } catch (error) {
-    console.error('Error fetching city data:', error)
     res.status(500).json({ error: 'Failed to fetch city data' })
   }
 })
