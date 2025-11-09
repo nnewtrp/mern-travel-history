@@ -18,6 +18,23 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
   const [visitItems, setVisitItems] = useState<CityItem[]>([{ city: "", country: "" }])
   const [transitItems, setTransitItems] = useState<CityItem[]>([])
 
+  // Methods
+  const addVisitItem = () => {
+    setVisitItems((prev) => ([...prev, { city: "", country: "" }]))
+  }
+
+  const addTransitItem = () => {
+    setTransitItems((prev) => ([...prev, { city: "", country: "" }]))
+  }
+
+  const removeVisitItem = (index: number) => {
+    setVisitItems((prev) => prev.filter((_: any, i: number) => i !== index))
+  }
+
+  const removeTransitItem = (index: number) => {
+    setTransitItems((prev) => prev.filter((_: any, i: number) => i !== index))
+  }
+
   // Functions
   const onClose = (reason: string) => {
     if (!["backdropClick", "escapeKeyDown"].includes(reason)) {
@@ -94,7 +111,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
               variant="contained"
               color="primary"
               size="small"
-              onClick={() => setVisitItems((prev) => ([...prev, { city: "", country: "" }]))}
+              onClick={() => addVisitItem()}
             >
               <AddIcon sx={{ mr: 0.5 }} fontSize="small" />
               Add City
@@ -121,7 +138,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                         <IconButton
                           edge="start"
                           color="inherit"
-                          onClick={() => setVisitItems((prev) => prev.filter((_: any, index: number) => index !== i))}
+                          onClick={() => removeVisitItem(i)}
                           aria-label="delete"
                           size="small"
                         >
@@ -166,7 +183,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
               variant="contained"
               color="primary"
               size="small"
-              onClick={() => setTransitItems((prev) => ([...prev, { city: "", country: "" }]))}
+              onClick={() => addTransitItem()}
             >
               <AddIcon sx={{ mr: 0.5 }} fontSize="small" />
               Add City
@@ -193,7 +210,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                         <IconButton
                           edge="start"
                           color="inherit"
-                          onClick={() => setTransitItems((prev) => prev.filter((_: any, index: number) => index !== i))}
+                          onClick={() => removeTransitItem(i)}
                           aria-label="delete"
                           size="small"
                         >
