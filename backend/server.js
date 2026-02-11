@@ -25,3 +25,7 @@ app.get('/', (req, res) => {
 // Import city routes
 const cityRoutes = require('./routes/master/city')
 app.use('/api/city', cityRoutes)
+
+// Import country routes
+const countryRoutes = require('./routes/master/country')
+app.use('/api/country', countryRoutes)

@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
     // --- Parse and sanitize query parameters ---
     const {
       TextSearch = '',
+      iso3 = '',
       page = 1,
       pageSize = 10
     } = req.query;
@@ -27,14 +28,19 @@ router.get('/', async (req, res) => {
     const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
 
     // --- Build query ---
-    const findQuery = TextSearch
+    var findQuery = TextSearch
       ? { name: { $regex: new RegExp(TextSearch, 'i') } }
       : {};
+      
+    if (iso3) {
+      findQuery.iso3 = iso3;
+    }
 
     // --- Run queries in parallel ---
     const [count, data] = await Promise.all([
       City.countDocuments(findQuery),
       City.find(findQuery)
+        .sort({ name: 1 })
         .select('name country iso3 -_id')
         .skip(limit > 0 ? skip : 0)
         .limit(limit > 0 ? limit : 0)
