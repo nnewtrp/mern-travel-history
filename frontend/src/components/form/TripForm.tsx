@@ -9,22 +9,22 @@ import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox
 import LocationPinIcon from '@mui/icons-material/LocationPin'
 
 interface CityItem {
-  city: string,
-  country: string,
+  country: string | null,
+  city: string | null,
 }
 
 export default function TripForm(props: { open: boolean, onClose?: () => void }) {
   // States
-  const [visitItems, setVisitItems] = useState<CityItem[]>([{ city: "", country: "" }])
+  const [visitItems, setVisitItems] = useState<CityItem[]>([{ country: null, city: null }])
   const [transitItems, setTransitItems] = useState<CityItem[]>([])
 
   // Methods
   const addVisitItem = () => {
-    setVisitItems((prev) => ([...prev, { city: "", country: "" }]))
+    setVisitItems((prev) => ([...prev, { country: null, city: null }]))
   }
 
   const addTransitItem = () => {
-    setTransitItems((prev) => ([...prev, { city: "", country: "" }]))
+    setTransitItems((prev) => ([...prev, { country: null, city: null }]))
   }
 
   const removeVisitItem = (index: number) => {
@@ -38,7 +38,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
   // Functions
   const onClose = (reason: string) => {
     if (!["backdropClick", "escapeKeyDown"].includes(reason)) {
-      setVisitItems([{ city: "", country: "" }])
+      setVisitItems([{ country: null, city: null }])
       setTransitItems([])
       props.onClose && props.onClose()
     }
@@ -124,8 +124,8 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ width: 50 }} />
-                    <TableCell>City</TableCell>
                     <TableCell>Country</TableCell>
+                    <TableCell>City</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -147,6 +147,21 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                       </TableCell>
                       <TableCell>
                         <Autocomplete
+                          value={item.country}
+                          onChange={(_event, newValue) => {
+                            setVisitItems((prev) => {
+                              const updated = [...prev]
+                              updated[i].country = newValue
+                              return updated
+                            })
+                          }}
+                          disablePortal
+                          options={[]}
+                          renderInput={(params) => <TextField {...params} label="Country" required />}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Autocomplete
                           value={item.city}
                           onChange={(_event, newValue) => {
                             setVisitItems((prev) => {
@@ -155,13 +170,13 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                               return updated
                             })
                           }}
+                          disabled={!item.country}
                           disablePortal
                           options={[]}
                           fullWidth
-                          renderInput={(params) => <TextField {...params} label="City" />}
+                          renderInput={(params) => <TextField {...params} label="City" required />}
                         />
                       </TableCell>
-                      <TableCell></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -196,8 +211,8 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ width: 50 }} />
-                    <TableCell>City</TableCell>
                     <TableCell>Country</TableCell>
+                    <TableCell>City</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -219,6 +234,21 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                       </TableCell>
                       <TableCell>
                         <Autocomplete
+                          value={item.country}
+                          onChange={(_event, newValue) => {
+                            setTransitItems((prev) => {
+                              const updated = [...prev]
+                              updated[i].country = newValue
+                              return updated
+                            })
+                          }}
+                          disablePortal
+                          options={[]}
+                          renderInput={(params) => <TextField {...params} label="Country" required />}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Autocomplete
                           value={item.city}
                           onChange={(_event, newValue) => {
                             setTransitItems((prev) => {
@@ -227,13 +257,13 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                               return updated
                             })
                           }}
+                          disabled={!item.country}
                           disablePortal
                           options={[]}
                           fullWidth
-                          renderInput={(params) => <TextField {...params} label="City" />}
+                          renderInput={(params) => <TextField {...params} label="City" required />}
                         />
                       </TableCell>
-                      <TableCell></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

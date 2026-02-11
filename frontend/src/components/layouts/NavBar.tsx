@@ -9,7 +9,7 @@ export default function NavBar() {
 
   const menuList = [
     { title: 'Map', path: '/map' },
-    { title: 'Add Trip', path: '/manage' },
+    { title: 'Manage Trip', path: '/manage' },
   ]
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
