@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { RecoilRoot } from 'recoil'
 import 'leaflet/dist/leaflet.css'
 import './App.css'
 
@@ -8,12 +9,14 @@ import ManagePage from "./pages/ManagePage.tsx"
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/map" element={<MapPage />} />
-        <Route path="/manage" element={<ManagePage />} />
-      </Routes>
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/manage" element={<ManagePage />} />
+        </Routes>
+      </BrowserRouter>
+    </RecoilRoot>
   )
 }

@@ -3,6 +3,9 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Autocomplete
 } from "@mui/material"
 import { useState } from "react"
+import { useRecoilState } from "recoil"
+import { countryState, type Country } from "../../stores/country"
+import { cityState, type CitiesInCountry } from "../../stores/city"
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
@@ -17,6 +20,10 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
   // States
   const [visitItems, setVisitItems] = useState<CityItem[]>([{ country: null, city: null }])
   const [transitItems, setTransitItems] = useState<CityItem[]>([])
+
+  // Autocomplete Options
+  const [countries] = useRecoilState<Country[]>(countryState)
+  const [cities] = useRecoilState<CitiesInCountry>(cityState)
 
   // Methods
   const addVisitItem = () => {
