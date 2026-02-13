@@ -2,7 +2,7 @@ import { atom } from "recoil";
 
 export interface Country {
   country: string;
-  iso3: string;
+  _id: string;
 }
 
 export const countryState = atom<Country[]>({

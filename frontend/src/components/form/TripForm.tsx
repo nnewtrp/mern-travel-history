@@ -2,7 +2,7 @@ import {
   Dialog, DialogContent, DialogActions, Button, TextField, Grid, AppBar, Toolbar, IconButton, Typography, Divider,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Autocomplete
 } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import { countryState, type Country } from "../../stores/country"
 import { cityState, type CitiesInCountry } from "../../stores/city"
@@ -10,11 +10,15 @@ import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
 import LocationPinIcon from '@mui/icons-material/LocationPin'
+import axios from "axios"
 
 interface CityItem {
   country: string | null,
   city: string | null,
 }
+
+// Constants
+const API_URL = import.meta.env.VITE_BASE_API_URL
 
 export default function TripForm(props: { open: boolean, onClose?: () => void }) {
   // States
@@ -22,8 +26,19 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
   const [transitItems, setTransitItems] = useState<CityItem[]>([])
 
   // Autocomplete Options
-  const [countries] = useRecoilState<Country[]>(countryState)
-  const [cities] = useRecoilState<CitiesInCountry>(cityState)
+  const [countries, setCountries] = useRecoilState<Country[]>(countryState)
+  const [cities, setCities] = useRecoilState<CitiesInCountry>(cityState)
+
+  // Effects
+  useEffect(() => {
+    const fetchCountries = async () => {
+      if (props.open && countries.length === 0) {
+        const res = await axios.get(`${API_URL}/master/country`)
+        setCountries(res.data?.data)
+      }
+    }
+    fetchCountries()
+  }, [props.open])
 
   // Methods
   const addVisitItem = () => {
@@ -158,12 +173,14 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                           onChange={(_event, newValue) => {
                             setVisitItems((prev) => {
                               const updated = [...prev]
-                              updated[i].country = newValue
+                              updated[i].country = newValue?._id ?? null
                               return updated
                             })
+                            console.log(item.country);
                           }}
-                          disablePortal
-                          options={[]}
+                          options={countries}
+                          getOptionLabel={(option) => option?.country ?? ''}
+                          isOptionEqualToValue={(option, value) => option._id === value._id}
                           renderInput={(params) => <TextField {...params} label="Country" required />}
                         />
                       </TableCell>
