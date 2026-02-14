@@ -95,6 +95,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
               label="Trip Name"
               type="text"
               fullWidth
+              required
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -104,6 +105,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
               label="Start Year"
               type="number"
               fullWidth
+              required
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -113,6 +115,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
               label="End Year"
               type="number"
               fullWidth
+              required
             />
           </Grid>
 
