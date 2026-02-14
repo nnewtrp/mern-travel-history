@@ -13,7 +13,7 @@ import LocationPinIcon from '@mui/icons-material/LocationPin'
 import axios from "axios"
 
 interface CityItem {
-  country: string | null,
+  country: Country | null,
   city: string | null,
 }
 
@@ -33,7 +33,7 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
   useEffect(() => {
     const fetchCountries = async () => {
       if (props.open && countries.length === 0) {
-        const res = await axios.get(`${API_URL}/master/country`)
+        const res = await axios.get(`${API_URL}/master/country?pageSize=-1`)
         setCountries(res.data?.data)
       }
     }
@@ -173,10 +173,9 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                           onChange={(_event, newValue) => {
                             setVisitItems((prev) => {
                               const updated = [...prev]
-                              updated[i].country = newValue?._id ?? null
+                              updated[i].country = newValue
                               return updated
                             })
-                            console.log(item.country);
                           }}
                           options={countries}
                           getOptionLabel={(option) => option?.country ?? ''}
@@ -266,8 +265,9 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                               return updated
                             })
                           }}
-                          disablePortal
-                          options={[]}
+                          options={countries}
+                          getOptionLabel={(option) => option?.country ?? ''}
+                          isOptionEqualToValue={(option, value) => option._id === value._id}
                           renderInput={(params) => <TextField {...params} label="Country" required />}
                         />
                       </TableCell>
