@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
       { $match: findQuery },
       {
         $group: {
-          _id: "$iso3",
+          _id: "$iso2",
           country: { $first: "$country" }
         }
       },
@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
 // GET /country/:iso3 - Retrieve a single document by iso3
 router.get('/:iso3', async (req, res) => {
   try {
-    const doc = await Country.findOne({ iso3: req.params.iso3 }).select('country iso2 iso3 -_id')
+    const doc = await Country.findOne({ iso3: req.params.iso3 }).select('country iso3 iso2 -_id')
     if (!doc) {
       return res.status(404).json({ error: 'Data not found' })
     }

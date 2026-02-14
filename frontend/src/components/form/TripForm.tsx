@@ -11,11 +11,8 @@ import AddIcon from '@mui/icons-material/Add'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
 import LocationPinIcon from '@mui/icons-material/LocationPin'
 import axios from "axios"
-
-interface CityItem {
-  country: Country | null,
-  city: string | null,
-}
+import { CountryAutocomplete } from "../shared/CountryAutocomplete"
+import { type CityItem } from "../shared/types"
 
 // Constants
 const API_URL = import.meta.env.VITE_BASE_API_URL
@@ -167,20 +164,12 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                           <IndeterminateCheckBoxIcon fontSize="small" color="error" />
                         </IconButton>
                       </TableCell>
-                      <TableCell>
-                        <Autocomplete
-                          value={item.country}
-                          onChange={(_event, newValue) => {
-                            setVisitItems((prev) => {
-                              const updated = [...prev]
-                              updated[i].country = newValue
-                              return updated
-                            })
-                          }}
-                          options={countries}
-                          getOptionLabel={(option) => option?.country ?? ''}
-                          isOptionEqualToValue={(option, value) => option._id === value._id}
-                          renderInput={(params) => <TextField {...params} label="Country" required />}
+                      <TableCell style={{maxWidth: 40}}>
+                        <CountryAutocomplete
+                          item={item}
+                          i={i}
+                          setItems={setVisitItems}
+                          countries={countries}
                         />
                       </TableCell>
                       <TableCell>
@@ -255,20 +244,12 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                           <IndeterminateCheckBoxIcon fontSize="small" color="error" />
                         </IconButton>
                       </TableCell>
-                      <TableCell>
-                        <Autocomplete
-                          value={item.country}
-                          onChange={(_event, newValue) => {
-                            setTransitItems((prev) => {
-                              const updated = [...prev]
-                              updated[i].country = newValue
-                              return updated
-                            })
-                          }}
-                          options={countries}
-                          getOptionLabel={(option) => option?.country ?? ''}
-                          isOptionEqualToValue={(option, value) => option._id === value._id}
-                          renderInput={(params) => <TextField {...params} label="Country" required />}
+                      <TableCell style={{maxWidth: 40}}>
+                        <CountryAutocomplete
+                          item={item}
+                          i={i}
+                          setItems={setTransitItems}
+                          countries={countries}
                         />
                       </TableCell>
                       <TableCell>
