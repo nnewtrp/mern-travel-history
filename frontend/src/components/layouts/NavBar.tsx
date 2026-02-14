@@ -29,7 +29,7 @@ export default function NavBar() {
   return (
     <AppBar sx={{ width: '100%' }}>
       <Toolbar>
-        <Typography variant="h6">Travel History</Typography>
+        <Typography variant="h6">TraveLog - Travel History</Typography>
         <div style={{ flexGrow: 1 }} />
         
         {/* Menu Drop Down */}
