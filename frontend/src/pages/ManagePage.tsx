@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Box, Button, Divider, Pagination } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 import NavBar from '../components/layouts/NavBar.tsx'
 import TripForm from '../components/form/TripForm.tsx'
 
@@ -12,7 +13,7 @@ function Body() {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h2>Trip Management</h2>
         <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
-          Add Trip
+          <AddIcon sx={{ mr: 0.5 }} fontSize="small" /> Add Trip
         </Button>
       </Box>
 
