@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     // --- Parse and sanitize query parameters ---
     const {
       TextSearch = '',
-      iso3 = '',
+      iso2 = '',
       page = 1,
       pageSize = 10
     } = req.query;
@@ -32,8 +32,8 @@ router.get('/', async (req, res) => {
       ? { name: { $regex: new RegExp(TextSearch, 'i') } }
       : {};
       
-    if (iso3) {
-      findQuery.iso3 = iso3;
+    if (iso2) {
+      findQuery.iso2 = iso2;
     }
 
     // --- Run queries in parallel ---
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
       City.countDocuments(findQuery),
       City.find(findQuery)
         .sort({ name: 1 })
-        .select('name country iso3 -_id')
+        .select('name country iso2 -_id')
         .skip(limit > 0 ? skip : 0)
         .limit(limit > 0 ? limit : 0)
         .lean()
@@ -57,6 +57,32 @@ router.get('/', async (req, res) => {
     });
   }
 });
+
+// GET /city/country/:iso2 - Retrieve cities by country iso2 code
+router.get('/country/:iso2', async (req, res) => {
+  try {
+    const { iso2 } = req.params;
+    const { TextSearch = '', pageSize = 10, page = 1 } = req.query;
+
+    const limit = Math.max(parseInt(pageSize, 10) || 10, 0);
+    const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
+
+    var findQuery = { iso2: iso2 };
+    if (TextSearch) {
+      findQuery.name = { $regex: new RegExp(TextSearch, 'i') };
+    }
+
+    const docs = await City.find(findQuery).select('name').skip(skip).limit(limit).sort({ name: 1 });
+    res.json({ data: docs.map(doc => doc.name).reduce((acc, name) => {
+      if (!acc.includes(name)) {
+        acc.push(name);
+      }
+      return acc;
+    }, []) });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch cities for country' })
+  }
+})
 
 // GET /city/:name - Retrieve a single document by name
 router.get('/:name', async (req, res) => {

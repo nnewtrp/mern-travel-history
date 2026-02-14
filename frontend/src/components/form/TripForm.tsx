@@ -1,11 +1,10 @@
 import {
   Dialog, DialogContent, DialogActions, Button, TextField, Grid, AppBar, Toolbar, IconButton, Typography, Divider,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Autocomplete
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import { countryState, type Country } from "../../stores/country"
-import { cityState, type CitiesInCountry } from "../../stores/city"
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
@@ -13,6 +12,7 @@ import LocationPinIcon from '@mui/icons-material/LocationPin'
 import axios from "axios"
 import { CountryAutocomplete } from "../shared/CountryAutocomplete"
 import { type CityItem } from "../shared/types"
+import CityAutocomplete from "../shared/CityAutocomplete"
 
 // Constants
 const API_URL = import.meta.env.VITE_BASE_API_URL
@@ -24,7 +24,6 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
 
   // Autocomplete Options
   const [countries, setCountries] = useRecoilState<Country[]>(countryState)
-  const [cities, setCities] = useRecoilState<CitiesInCountry>(cityState)
 
   // Effects
   useEffect(() => {
@@ -176,20 +175,10 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                         />
                       </TableCell>
                       <TableCell>
-                        <Autocomplete
-                          value={item.city}
-                          onChange={(_event, newValue) => {
-                            setVisitItems((prev) => {
-                              const updated = [...prev]
-                              updated[i].city = newValue
-                              return updated
-                            })
-                          }}
-                          disabled={!item.country}
-                          disablePortal
-                          options={[]}
-                          fullWidth
-                          renderInput={(params) => <TextField {...params} label="City" required />}
+                        <CityAutocomplete
+                          item={item}
+                          i={i}
+                          setItems={setVisitItems}
                         />
                       </TableCell>
                     </TableRow>
@@ -256,20 +245,10 @@ export default function TripForm(props: { open: boolean, onClose?: () => void })
                         />
                       </TableCell>
                       <TableCell>
-                        <Autocomplete
-                          value={item.city}
-                          onChange={(_event, newValue) => {
-                            setTransitItems((prev) => {
-                              const updated = [...prev]
-                              updated[i].city = newValue
-                              return updated
-                            })
-                          }}
-                          disabled={!item.country}
-                          disablePortal
-                          options={[]}
-                          fullWidth
-                          renderInput={(params) => <TextField {...params} label="City" required />}
+                        <CityAutocomplete
+                          item={item}
+                          i={i}
+                          setItems={setTransitItems}
                         />
                       </TableCell>
                     </TableRow>

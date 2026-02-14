@@ -6,23 +6,25 @@ import { type CityItem } from "./types"
 const FLAG_URL = import.meta.env.VITE_BASE_FLAG_URL
 
 export function CountryAutocomplete(props: { item: CityItem, i: number, setItems: Function, countries: Country[] }) {
+  // Props
   const { item, i, setItems, countries } = props
 
   return (
     <Autocomplete
       value={item.country}
       onChange={(_event, newValue) => {
-        setItems((prev: any[]) => {
+        setItems((prev: CityItem[]) => {
           const updated = [...prev]
           updated[i].country = newValue
+          updated[i].city = null
           return updated
         })
       }}
       options={countries}
       getOptionLabel={(option) => option?.country ?? ''}
       isOptionEqualToValue={(option, value) => option._id === value._id}
-      renderOption={(props, option) => (
-        <li {...props} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      renderOption={(innerProps, option) => (
+        <li {...innerProps} key={option._id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <img
             src={`${FLAG_URL}/w20/${option._id.toLowerCase()}.png`}
             alt={option.country}
