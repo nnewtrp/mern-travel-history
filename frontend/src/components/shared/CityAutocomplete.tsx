@@ -1,6 +1,6 @@
 import { Autocomplete, TextField } from '@mui/material'
 import { type CityItem } from "./types"
-import { cityState, tempCountryFoundState, type CitiesInCountry } from "../../stores/city"
+import { cityState, keywordSearchedCityState, tempCountryFoundState, type CitiesInCountry } from "../../stores/city"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { useEffect } from 'react'
 
@@ -14,19 +14,41 @@ export default function CityAutocomplete(props: { item: CityItem, i: number, set
   // Autocomplete Options
   const [cities, setCities] = useRecoilState<CitiesInCountry>(cityState)
   const tempCountryFound = useRecoilValue(tempCountryFoundState)
+  const [keywordSearchedCity, setKeywordSearchedCity] = useRecoilState<string[]>(keywordSearchedCityState)
 
   // Functions
-  const fetchCities = async () => {
-    if (item.country && !tempCountryFound.includes(item.country._id)) {
-      const res = await fetch(`${API_URL}/master/city/country/${item.country._id}`)
+  const fetchCities = async (textSearch: string) => {
+    if (item.country) {
+      if (!textSearch && !tempCountryFound.includes(item.country._id)) return
+
+      var api = `${API_URL}/master/city/country/${item.country._id}`
+
+      if (textSearch) {
+        if (
+          textSearch.length < 3 ||
+          keywordSearchedCity.includes(textSearch) ||
+          cities[item.country._id]?.some(city => city.toLowerCase().includes(textSearch.toLowerCase()))
+        ) return
+        api += `?textSearch=${textSearch}`
+        setKeywordSearchedCity((prev: string[]) => [...prev, textSearch])
+      }
+
+      const res = await fetch(api)
       const data = await res.json()
-      setCities((prev) => ({ ...prev, [item.country?._id ?? '']: data?.data || [] }))
+
+      const countryKey = item.country._id
+
+      setCities((prev) => {
+        var newData = [...(prev[countryKey] || []), ...(data?.data || [])]
+        console.log(newData)
+        return { ...prev, [countryKey]: newData }
+      })
     }
   }
 
   // Effects
   useEffect(() => {
-    fetchCities()
+    fetchCities('')
   }, [item.country])
 
   return (
@@ -42,6 +64,7 @@ export default function CityAutocomplete(props: { item: CityItem, i: number, set
       disabled={!item.country}
       disablePortal
       options={cities[item.country?._id || ""] || []}
+      onInputChange={(_event, newInputValue) => { fetchCities(newInputValue) }}
       fullWidth
       renderInput={(params) => <TextField {...params} label="City" required />}
     />
