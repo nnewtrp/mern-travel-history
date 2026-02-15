@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   try {
     // --- Parse and sanitize query parameters ---
     const {
-      TextSearch = '',
+      textSearch = '',
       page = 1,
       pageSize = 10
     } = req.query;
@@ -34,8 +34,8 @@ router.get('/', async (req, res) => {
         : Math.max((parseInt(page, 10) - 1) * limit, 0);
 
     // --- Build query ---
-    const findQuery = TextSearch
-      ? { country: { $regex: new RegExp(TextSearch, 'i') } }
+    const findQuery = textSearch
+      ? { country: { $regex: new RegExp(textSearch, 'i') } }
       : {};
 
     // --- Aggregate to get distinct countries ---

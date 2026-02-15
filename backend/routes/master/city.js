@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   try {
     // --- Parse and sanitize query parameters ---
     const {
-      TextSearch = '',
+      textSearch = '',
       iso2 = '',
       page = 1,
       pageSize = 10
@@ -28,8 +28,8 @@ router.get('/', async (req, res) => {
     const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
 
     // --- Build query ---
-    var findQuery = TextSearch
-      ? { name: { $regex: new RegExp(TextSearch, 'i') } }
+    var findQuery = textSearch
+      ? { name: { $regex: new RegExp(textSearch, 'i') } }
       : {};
       
     if (iso2) {
@@ -62,14 +62,14 @@ router.get('/', async (req, res) => {
 router.get('/country/:iso2', async (req, res) => {
   try {
     const { iso2 } = req.params;
-    const { TextSearch = '', pageSize = 10, page = 1 } = req.query;
+    const { textSearch = '', pageSize = 10, page = 1 } = req.query;
 
     const limit = Math.max(parseInt(pageSize, 10) || 10, 0);
     const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
 
     var findQuery = { iso2: iso2 };
-    if (TextSearch) {
-      findQuery.name = { $regex: new RegExp(TextSearch, 'i') };
+    if (textSearch) {
+      findQuery.name = { $regex: new RegExp(textSearch, 'i') };
     }
 
     const docs = await City.find(findQuery).select('name').skip(skip).limit(limit).sort({ name: 1 });
