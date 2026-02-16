@@ -1,8 +1,7 @@
 import { Autocomplete, TextField } from '@mui/material'
 import { type CityItem } from "./types"
-import { cityState, keywordSearchedCityState, tempCountryFoundState, type CitiesInCountry } from "../../stores/city"
-import { useRecoilState, useRecoilValue } from "recoil"
-import { useEffect } from 'react'
+import { cityState, keywordSearchedCityState, type CitiesInCountry } from "../../stores/city"
+import { useRecoilState } from "recoil"
 
 // Constants
 const API_URL = import.meta.env.VITE_BASE_API_URL
@@ -13,43 +12,44 @@ export default function CityAutocomplete(props: { item: CityItem, i: number, set
 
   // Autocomplete Options
   const [cities, setCities] = useRecoilState<CitiesInCountry>(cityState)
-  const tempCountryFound = useRecoilValue(tempCountryFoundState)
-  const [keywordSearchedCity, setKeywordSearchedCity] = useRecoilState<string[]>(keywordSearchedCityState)
+  const [keywordSearchedCity, setKeywordSearchedCity] = useRecoilState<CitiesInCountry>(keywordSearchedCityState)
 
   // Functions
   const fetchCities = async (textSearch: string) => {
-    if (item.country) {
-      if (!textSearch && !tempCountryFound.includes(item.country._id)) return
+    if (item.country && !!textSearch) {
+      const countryKey = item.country._id
 
-      var api = `${API_URL}/master/city/country/${item.country._id}`
+      if (
+        textSearch.length < 3 ||
+        keywordSearchedCity[countryKey]?.includes(textSearch) ||
+        cities[countryKey]?.some(city => city.toLowerCase().includes(textSearch.toLowerCase()))
+      ) return
 
-      if (textSearch) {
-        if (
-          textSearch.length < 3 ||
-          keywordSearchedCity.includes(textSearch) ||
-          cities[item.country._id]?.some(city => city.toLowerCase().includes(textSearch.toLowerCase()))
-        ) return
-        api += `?textSearch=${textSearch}`
-        setKeywordSearchedCity((prev: string[]) => [...prev, textSearch])
-      }
+      var api = `${API_URL}/master/city/country/${countryKey}?textSearch=${textSearch}`
+      setKeywordSearchedCity((prev) => {
+        return { ...prev, [countryKey]: [...(prev[countryKey] || []), textSearch] }
+      })
 
       const res = await fetch(api)
       const data = await res.json()
 
-      const countryKey = item.country._id
-
       setCities((prev) => {
         var newData = [...(prev[countryKey] || []), ...(data?.data || [])]
-        console.log(newData)
+          .reduce((acc: string[], city: string) => {
+            if (!acc.some((c) => c.toLowerCase() === city.toLowerCase())) {
+              acc.push(city)
+            }
+            return acc
+          }, [])
         return { ...prev, [countryKey]: newData }
       })
     }
   }
 
   // Effects
-  useEffect(() => {
-    fetchCities('')
-  }, [item.country])
+  // useEffect(() => {
+  //   fetchCities('')
+  // }, [item.country])
 
   return (
     <Autocomplete

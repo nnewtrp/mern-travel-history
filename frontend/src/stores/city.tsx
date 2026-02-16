@@ -1,7 +1,7 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
 export interface CitiesInCountry {
-  [iso3: string]: string[];
+  [iso2: string]: string[];
 }
 
 export const cityState = atom<CitiesInCountry>({
@@ -9,15 +9,7 @@ export const cityState = atom<CitiesInCountry>({
   default: {},
 });
 
-export const tempCountryFoundState = selector<string[]>({
-  key: 'tempCountryFoundState',
-  get: ({ get }) => {
-    const citiesInCountry = get(cityState);
-    return Object.keys(citiesInCountry);
-  },
-})
-
-export const keywordSearchedCityState = atom<string[]>({
+export const keywordSearchedCityState = atom<CitiesInCountry>({
   key: 'keywordSearchedCityState',
-  default: [],
+  default: {},
 })
