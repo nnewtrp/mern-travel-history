@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Autocomplete, TextField } from '@mui/material'
 import { type CityItem } from "./types"
 import { cityState, keywordSearchedCityState, type CitiesInCountry } from "../../stores/city"
@@ -14,27 +15,39 @@ export default function CityAutocomplete(props: { item: CityItem, i: number, set
   const [cities, setCities] = useRecoilState<CitiesInCountry>(cityState)
   const [keywordSearchedCity, setKeywordSearchedCity] = useRecoilState<CitiesInCountry>(keywordSearchedCityState)
 
+  // Variables
+  const countryKey = item.country?._id || ''
+  const [prevTextSearch, setPrevTextSearch] = useState<string | null>(null)
+  const [prevTextSearchFound, setPrevTextSearchFound] = useState<number>(0)
+
   // Functions
   const fetchCities = async (textSearch: string) => {
     if (item.country && !!textSearch) {
-      const countryKey = item.country._id
-
       if (
         textSearch.length < 3 ||
         keywordSearchedCity[countryKey]?.includes(textSearch) ||
         cities[countryKey]?.some(city => city.toLowerCase().includes(textSearch.toLowerCase()))
       ) return
 
-      var api = `${API_URL}/master/city/country/${countryKey}?textSearch=${textSearch}`
+      if (
+        prevTextSearch &&
+        textSearch.toLowerCase().startsWith(prevTextSearch.toLowerCase()) && 
+        prevTextSearchFound === 0
+      ) return
+
+      const api = `${API_URL}/master/city/country/${countryKey}?textSearch=${textSearch}`
       setKeywordSearchedCity((prev) => {
         return { ...prev, [countryKey]: [...(prev[countryKey] || []), textSearch] }
       })
 
       const res = await fetch(api)
       const data = await res.json()
+      const valData = data?.data || []
+      setPrevTextSearch(textSearch)
+      setPrevTextSearchFound(valData.length)
 
       setCities((prev) => {
-        var newData = [...(prev[countryKey] || []), ...(data?.data || [])]
+        var newData = [...(prev[countryKey] || []), ...(valData)]
           .reduce((acc: string[], city: string) => {
             if (!acc.some((c) => c.toLowerCase() === city.toLowerCase())) {
               acc.push(city)

@@ -72,7 +72,28 @@ router.get('/country/:iso2', async (req, res) => {
       findQuery.name = { $regex: new RegExp(textSearch, 'i') }
     }
 
-    const docs = await City.find(findQuery).select('name').skip(skip).limit(limit).sort({ name: 1 })
+    const docs = await City.aggregate([
+      { $match: findQuery },
+      {
+        $addFields: {
+          nameLength: { $strLenCP: "$name" }
+        }
+      },
+      {
+        $sort: {
+          nameLength: 1,
+          name: 1
+        }
+      },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          name: 1
+        }
+      }
+    ])
+
     res.json({ data: docs.map(doc => doc.name).reduce((acc, name) => {
       if (!acc.includes(name)) {
         acc.push(name)
