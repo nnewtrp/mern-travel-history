@@ -59,11 +59,6 @@ export default function CityAutocomplete(props: { item: CityItem, i: number, set
     }
   }
 
-  // Effects
-  // useEffect(() => {
-  //   fetchCities('')
-  // }, [item.country])
-
   return (
     <Autocomplete
       value={item.city}
