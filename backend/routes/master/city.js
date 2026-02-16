@@ -22,18 +22,18 @@ router.get('/', async (req, res) => {
       iso2 = '',
       page = 1,
       pageSize = 10
-    } = req.query;
+    } = req.query
 
-    const limit = Math.max(parseInt(pageSize, 10) || 10, 0);
-    const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
+    const limit = Math.max(parseInt(pageSize, 10) || 10, 0)
+    const skip = Math.max((parseInt(page, 10) - 1) * limit, 0)
 
     // --- Build query ---
     var findQuery = textSearch
       ? { name: { $regex: new RegExp(textSearch, 'i') } }
-      : {};
+      : {}
       
     if (iso2) {
-      findQuery.iso2 = iso2;
+      findQuery.iso2 = iso2
     }
 
     // --- Run queries in parallel ---
@@ -46,39 +46,39 @@ router.get('/', async (req, res) => {
         .limit(limit > 0 ? limit : 0)
         .lean()
         .exec()
-    ]);
+    ])
 
     // --- Return consistent JSON response ---
-    res.json({ count, data });
+    res.json({ count, data })
   } catch (error) {
     res.status(500).json({
       message: 'Failed to fetch cities',
       error: error.message
-    });
+    })
   }
-});
+})
 
 // GET /city/country/:iso2 - Retrieve cities by country iso2 code
 router.get('/country/:iso2', async (req, res) => {
   try {
-    const { iso2 } = req.params;
-    const { textSearch = '', pageSize = 10, page = 1 } = req.query;
+    const { iso2 } = req.params
+    const { textSearch = '', pageSize = 10, page = 1 } = req.query
 
-    const limit = Math.max(parseInt(pageSize, 10) || 10, 0);
-    const skip = Math.max((parseInt(page, 10) - 1) * limit, 0);
+    const limit = Math.max(parseInt(pageSize, 10) || 10, 0)
+    const skip = Math.max((parseInt(page, 10) - 1) * limit, 0)
 
-    var findQuery = { iso2: iso2 };
+    var findQuery = { iso2: iso2 }
     if (textSearch) {
-      findQuery.name = { $regex: new RegExp(textSearch, 'i') };
+      findQuery.name = { $regex: new RegExp(textSearch, 'i') }
     }
 
-    const docs = await City.find(findQuery).select('name').skip(skip).limit(limit).sort({ name: 1 });
+    const docs = await City.find(findQuery).select('name').skip(skip).limit(limit).sort({ name: 1 })
     res.json({ data: docs.map(doc => doc.name).reduce((acc, name) => {
       if (!acc.includes(name)) {
-        acc.push(name);
+        acc.push(name)
       }
-      return acc;
-    }, []) });
+      return acc
+    }, []) })
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch cities for country' })
   }

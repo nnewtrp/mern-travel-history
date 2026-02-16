@@ -8,7 +8,7 @@ const Country = mongoose.model('country', new mongoose.Schema({
   country: String,
   iso2: String,
   iso3: String,
-}, { collection: 'mas_cities' }));
+}, { collection: 'mas_cities' }))
 
 // GET /country - Retrieve all documents from the 'country' collection
 router.get('/', async (req, res) => {
@@ -18,25 +18,25 @@ router.get('/', async (req, res) => {
       textSearch = '',
       page = 1,
       pageSize = 10
-    } = req.query;
+    } = req.query
 
     // Handle pageSize = -1 for no pagination
-    const parsedPageSize = parseInt(pageSize, 10);
+    const parsedPageSize = parseInt(pageSize, 10)
 
     const limit =
       parsedPageSize === -1
         ? null
-        : Math.max(parsedPageSize || 10, 1);
+        : Math.max(parsedPageSize || 10, 1)
 
     const skip =
       parsedPageSize === -1
         ? 0
-        : Math.max((parseInt(page, 10) - 1) * limit, 0);
+        : Math.max((parseInt(page, 10) - 1) * limit, 0)
 
     // --- Build query ---
     const findQuery = textSearch
       ? { country: { $regex: new RegExp(textSearch, 'i') } }
-      : {};
+      : {}
 
     // --- Aggregate to get distinct countries ---
     const [result] = await Country.aggregate([
@@ -56,21 +56,21 @@ router.get('/', async (req, res) => {
           ]
         }
       }
-    ]);
+    ])
 
     // --- Extract data and count ---
-    const data = result.data;
-    const count = result.count[0]?.total || 0;
+    const data = result.data
+    const count = result.count[0]?.total || 0
 
     // --- Return consistent JSON response ---
-    res.json({ count, data });
+    res.json({ count, data })
   } catch (error) {
     res.status(500).json({
       message: 'Failed to fetch countries',
       error: error.message
-    });
+    })
   }
-});
+})
 
 // GET /country/:iso3 - Retrieve a single document by iso3
 router.get('/:iso3', async (req, res) => {
