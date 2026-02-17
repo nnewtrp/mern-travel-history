@@ -15,7 +15,7 @@ import {
 } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 
-export default function SignUpForm() {
+export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.SetStateAction<string>> }) {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
 
@@ -267,7 +267,7 @@ export default function SignUpForm() {
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <Typography variant="body2" color="text.secondary">
             Already have an account?{" "}
-            <Link href="/login">Sign in</Link>
+            <Button variant="text" size="small" onClick={() => setMenu("login")}>Sign in</Button>
           </Typography>
         </Box>
       </Box>

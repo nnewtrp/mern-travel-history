@@ -13,7 +13,7 @@ import {
 } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 
-export default function LoginForm() {
+export default function LoginForm({ setMenu }: { setMenu: React.Dispatch<React.SetStateAction<string>> }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)
@@ -147,7 +147,7 @@ export default function LoginForm() {
           }}
         >
           <Button variant="text" size="small">Forgot password?</Button>
-          <Button variant="text" size="small">Create account</Button>
+          <Button variant="text" size="small" onClick={() => setMenu("signup")}>Create account</Button>
         </Box>
       </Box>
     </Card>
