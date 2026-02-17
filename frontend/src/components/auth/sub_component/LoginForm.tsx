@@ -13,7 +13,7 @@ import {
 } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 
-function LoginForm() {
+export default function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)
@@ -151,13 +151,5 @@ function LoginForm() {
         </Box>
       </Box>
     </Card>
-  )
-}
-
-export default function AuthForm() {
-  return (
-    <>
-      <LoginForm />
-    </>
   )
 }

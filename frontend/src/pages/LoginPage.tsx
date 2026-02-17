@@ -1,5 +1,5 @@
 import NavBar from "../components/layouts/NavBar.tsx"
-import AuthForm from "../components/form/AuthForm.tsx"
+import AuthForm from "../components/auth/AuthForm.tsx"
 
 export default function LoginPage() {
   return (
