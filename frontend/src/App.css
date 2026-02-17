@@ -1,3 +1,9 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: hsl(204, 100%, 97%);
+}
+
 .App {
   width: 100vw;
   height: calc(100vh - 64px);

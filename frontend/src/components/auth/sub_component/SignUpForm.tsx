@@ -16,7 +16,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 
 export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.SetStateAction<string>> }) {
-  const [fullName, setFullName] = useState("")
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
 
   const [password, setPassword] = useState("")
@@ -29,7 +29,7 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
   const [submitting, setSubmitting] = useState(false)
 
   const [errors, setErrors] = useState<{
-    fullName?: string
+    username?: string
     email?: string
     password?: string
     confirm?: string
@@ -66,7 +66,7 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
   const validate = () => {
     const next: typeof errors = {}
 
-    if (!fullName.trim()) next.fullName = "Full name is required"
+    if (!username.trim()) next.username = "Username is required"
 
     if (!email) next.email = "Email is required"
     else if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "Enter a valid email"
@@ -97,10 +97,10 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
       await new Promise((res) => setTimeout(res, 1200))
 
       // Example: call your auth API here
-      // await api.signup({ fullName, email, password, acceptTerms })
+      // await api.signup({ username, email, password, acceptTerms })
 
       // Handle success (navigate, show toast, etc.)
-      console.log("Signed up:", { fullName, email, acceptTerms })
+      console.log("Signed up:", { username, email, acceptTerms })
     } catch (err) {
       // Handle auth error (show message to user)
       console.error(err)
@@ -130,14 +130,15 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
 
       <Box component="form" onSubmit={handleSubmit} noValidate>
         <TextField
-          label="Full name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          label="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           fullWidth
           margin="normal"
           autoComplete="name"
-          error={!!errors.fullName}
-          helperText={errors.fullName}
+          error={!!errors.username}
+          helperText={errors.username}
+          required
         />
 
         <TextField
@@ -150,6 +151,7 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
           autoComplete="email"
           error={!!errors.email}
           helperText={errors.email}
+          required
         />
 
         <TextField
@@ -175,6 +177,7 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
               </InputAdornment>
             ),
           }}
+          required
         />
 
         {/* Password strength */}
@@ -217,6 +220,7 @@ export default function SignUpForm({ setMenu }: { setMenu: React.Dispatch<React.
               </InputAdornment>
             ),
           }}
+          required
         />
 
         <FormControlLabel
