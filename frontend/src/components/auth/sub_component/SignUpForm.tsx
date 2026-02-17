@@ -15,17 +15,7 @@ import {
 } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 
-type SignUpFormProps = {
-  onSubmit?: (data: {
-    fullName: string
-    email: string
-    password: string
-    acceptTerms: boolean
-  }) => Promise<void> | void
-  title?: string
-}
-
-export default function SignUpForm({ onSubmit, title = "Create your account" }: SignUpFormProps) {
+export default function SignUpForm() {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
 
@@ -103,22 +93,17 @@ export default function SignUpForm({ onSubmit, title = "Create your account" }: 
 
     try {
       setSubmitting(true)
-      // If parent passed a custom submit, use it.
-      if (onSubmit) {
-        await onSubmit({ fullName, email, password, acceptTerms })
-      } else {
-        // Demo async
-        await new Promise((r) => setTimeout(r, 1200))
-        console.log("Signed up:", { fullName, email, acceptTerms })
-      }
-      // Optionally clear form or navigate
-    } catch (err: any) {
-      setErrors((prev) => ({
-        ...prev,
-        form:
-          err?.message ||
-          "Something went wrong while creating your account. Please try again.",
-      }))
+      // TODO: Replace this timeout with your actual auth call
+      await new Promise((res) => setTimeout(res, 1200))
+
+      // Example: call your auth API here
+      // await api.signup({ fullName, email, password, acceptTerms })
+
+      // Handle success (navigate, show toast, etc.)
+      console.log("Signed up:", { fullName, email, acceptTerms })
+    } catch (err) {
+      // Handle auth error (show message to user)
+      console.error(err)
     } finally {
       setSubmitting(false)
     }
@@ -137,7 +122,7 @@ export default function SignUpForm({ onSubmit, title = "Create your account" }: 
       }}
     >
       <Typography variant="h5" fontWeight={700} mb={2} textAlign="center">
-        {title}
+        Create your account
       </Typography>
       <Typography variant="body2" color="text.secondary" textAlign="center" mb={3}>
         Join us in seconds. It’s quick and easy.
